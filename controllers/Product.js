@@ -9,6 +9,7 @@ module.exports = {
 
       const alert = { message: alertMessage, status: alertStatus };
       const product = await Product.find();
+      console.log(product);
 
       res.render('admin/product/view_product', {
         product,
@@ -16,95 +17,137 @@ module.exports = {
         title: 'Bakery | Product',
       });
     } catch (err) {
-      console.log(error);
       req.flash('alertMessage', `${err.message}`);
       req.flash('alertStatus', 'danger');
       res.redirect('/product');
     }
   },
-  // viewCreate: async (req, res) => {
-  //   try {
-  //     res.render('admin/category/create', {
-  //       title: 'add category',
-  //     });
-  //   } catch (err) {
-  //     req.flash('alertMessage', `${err.message}`);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/category');
-  //   }
-  // },
+  viewCreate: async (req, res) => {
+    try {
+      const category = await Category.find();
+      res.render('admin/product/create', {
+        title: 'add product',
+        category,
+      });
+    } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/category');
+    }
+  },
 
-  // createCategory: async (req, res) => {
-  //   try {
-  //     const { name } = req.body;
+  createProduct: async (req, res) => {
+    try {
+      const { categoryId, name, price, description, size, weight } = req.body;
+      if (req.file) {
+        const category = await Category.findOne({ _id: categoryId });
 
-  //     let category = await Category({ name });
-  //     await category.save();
+        const newProduct = {
+          categoryId: category._id,
+          name,
+          price,
+          description,
+          size,
+          weight,
+          imageUrl: `images/${req.file.filename}`,
+        };
+        console.log(newProduct);
 
-  //     req.flash('alertMessage', 'Berhasil tambah kategori');
-  //     req.flash('alertStatus', 'success');
+        const product = await Product.create(newProduct);
 
-  //     res.redirect('/category');
-  //   } catch (err) {
-  //     req.flash('alertMessage', `${err.message}`);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/category');
-  //   }
-  // },
+        category.productId.push({ _id: product._id });
 
-  // viewEdit: async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
+        await category.save();
+        await product.save();
+      }
 
-  //     const category = await Category.findOne({ _id: id });
-  //     res.render('admin/category/edit', {
-  //       category,
-  //       title: 'edit category',
-  //     });
-  //   } catch (err) {
-  //     req.flash('alertMessage', `${err.message}`);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/category');
-  //   }
-  // },
+      req.flash('alertMessage', 'Added product successfully');
+      req.flash('alertStatus', 'success');
 
-  // editCategory: async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
-  //     const { name } = req.body;
+      res.redirect('/product');
+    } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/product');
+    }
+  },
 
-  //     await Category.findOneAndUpdate(
-  //       {
-  //         _id: id,
-  //       },
-  //       { name }
-  //     );
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const product = await Product.findOne({ _id: id }).populate({
+        path: 'categoryId',
+        select: 'id name',
+      });
+      const category = await Category.find();
+      res.render('admin/product/edit', {
+        product,
+        category,
+        title: 'edit product',
+      });
+    } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/product');
+    }
+  },
 
-  //     req.flash('alertMessage', 'Berhasil Edit kategori');
-  //     req.flash('alertStatus', 'success');
+  editProduct: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { categoryId, name, price, description, size, weight } = req.body;
+      const product = await Product.findOne({ _id: id }).populate({
+        path: 'categoryId',
+        select: 'id name',
+      });
 
-  //     res.redirect('/category');
-  //   } catch (err) {
-  //     req.flash('alertMessage', `${err.message}`);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/category');
-  //   }
-  // },
+      if (req.file == undefined) {
+        product.name = name;
+        product.price = price;
+        product.size = size;
+        product.description = description;
+        product.weight = weight;
+        product.categoryId = categoryId;
+        await product.save();
 
-  // deleteCategory: async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
-  //     await Category.findOneAndRemove({
-  //       _id: id,
-  //     });
+        req.flash('alertMessage', 'Updated product successfully');
+        req.flash('alertStatus', 'success');
+        res.redirect('/product');
+      } else {
+        product.name = name;
+        product.price = price;
+        product.size = size;
+        product.description = description;
+        product.weight = weight;
+        product.categoryId = categoryId;
+        product.imageUrl = `images/${req.file.filename}`;
+        await product.save();
 
-  //     req.flash('alertMessage', 'Berhasil Delete kategori');
-  //     req.flash('alertStatus', 'success');
-  //     res.redirect('/category');
-  //   } catch (err) {
-  //     req.flash('alertMessage', `${err.message}`);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/category');
-  //   }
-  // },
+        req.flash('alertMessage', 'Updated product successfully');
+        req.flash('alertStatus', 'success');
+        res.redirect('/product');
+      }
+    } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/product');
+    }
+  },
+
+  deleteProduct: async (req, res) => {
+    try {
+      const { id } = req.params;
+      await Product.findOneAndRemove({
+        _id: id,
+      });
+
+      req.flash('alertMessage', 'Deleted product successfully');
+      req.flash('alertStatus', 'success');
+      res.redirect('/product');
+    } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/product');
+    }
+  },
 };

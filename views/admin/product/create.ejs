@@ -8,12 +8,12 @@
                     <div class="container-fluid">
                         <div class="row mb-2">
                             <div class="col-sm-6">
-                                <h1>Kategori</h1>
+                                <h1>Product</h1>
                             </div>
                             <div class="col-sm-6">
                                 <ol class="breadcrumb float-sm-right">
                                     <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                    <li class="breadcrumb-item"><a href="/category">Kategori</a></li>
+                                    <li class="breadcrumb-item"><a href="/product">Product</a></li>
                                     <li class="breadcrumb-item active">Tambah</li>
                                 </ol>
                             </div>
@@ -29,15 +29,50 @@
                                 <div class="card-body">
                                     <div class="card card-primary">
                                         <div class="card-header">
-                                            <h3 class="card-title">Form Tambah Kategori</h3>
+                                            <h3 class="card-title">Form Tambah Produk</h3>
                                         </div>
-                                        <form action="/category/create" method="post">
+                                        <form action="/product/create" method="POST" enctype="multipart/form-data">
                                             <div class="card-body">
                                                 <div class="form-group">
-                                                    <label for="name">Nama Kategori</label>
+                                                    <label for="name">Nama Produk</label>
                                                     <input type="text" class="form-control" id="name" name="name"
-                                                        placeholder="Enter Name category" required>
+                                                        placeholder="Enter Product Name" required>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label for="price">Price</label>
+                                                    <input type="text" class="form-control" id="price" name="price"
+                                                        placeholder="Enter Product Price" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="size">Size</label>
+                                                    <input type="text" class="form-control" id="size" name="size"
+                                                        placeholder="Enter Product Size" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="weight">Weight</label>
+                                                    <input type="text" class="form-control" id="weight" name="weight"
+                                                        placeholder="Enter Product Weight" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Category</label>
+                                                    <select class="form-control" name="categoryId">
+                                                        <option value=""> Select Category </option>
+                                                        <% for(let i=0; i< category.length; i++){ %>
+                                                            <option value="<%= category[i].id %>">
+                                                                <%= category[i].name %>
+                                                            </option>
+                                                            <%}%>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="image">Gambar</label>
+                                                    <input type="file" name="image" class="form-control" id="image"
+                                                        placeholder="Masukan gambar" required>
+                                                    <br>
+                                                    <img src="" id="perview">
+                                                </div>
+                                                <textarea id="description" name="description">
+                                                  </textarea>
                                             </div>
                                             <div class="card-footer">
                                                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -58,3 +93,28 @@
 
             <%- include ../../partials/footer.ejs %>
                 <%- include ../../partials/script.ejs %>
+
+                    <script>
+                        function readURL(input) {
+                            if (input.files && input.files[0]) {
+                                const reader = new FileReader();
+                                reader.onload = function (e) {
+                                    $('#perview').attr('src', e.target.result);
+                                    $('#perview').attr('width', '20%');
+                                    $('#perview').attr('height', '20%');
+                                }
+                                reader.readAsDataURL(input.files[0])
+                            }
+                        }
+                        $('#image').change(function () {
+                            readURL(this)
+                        })
+
+                        $(document).ready(function () {
+                            $('#description').summernote({
+                                placeholder: 'Enter Product Description',
+                                tabsize: 2,
+                                height: 100
+                            });
+                        });
+                    </script>
