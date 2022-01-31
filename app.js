@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const methodOverride = require('method-override');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -26,6 +27,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const categoryRouter = require('./routes/category');
 const productRouter = require('./routes/product');
+const apiRouter = require('./routes/api');
 
 var app = express();
 
@@ -44,6 +46,7 @@ app.use(
 );
 // flash
 app.use(flash());
+app.use(cors());
 app.use(methodOverride('_method'));
 
 app.use(logger('dev'));
@@ -64,6 +67,7 @@ app.use('/users', usersRouter);
 // ROUTES
 app.use('/category', categoryRouter);
 app.use('/product', productRouter);
+app.use('/api/v1/member', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
