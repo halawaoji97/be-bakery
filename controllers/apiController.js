@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Order = require('../models/Order');
+const Member = require('../models/Member');
 
 module.exports = {
   landingPage: async (req, res) => {
@@ -34,19 +35,24 @@ module.exports = {
 
   orderPage: async (req, res) => {
     const {
-      // idProduct,
+      email,
+      fullName,
       orderOn,
       deliveryOn,
-      fullName,
-      email,
-      phoneNumber,
-      accountHolder,
-      bankFrom,
+      addressNote,
       cartItems,
+      cartTotalQty,
+      cartTotalAmount,
+      phoneNumber,
+      bankFrom,
+      accountHolder,
+      street,
+      city,
+      country,
+      zipCode,
     } = req.body;
 
     if (
-      // idProduct === undefined ||
       orderOn === undefined ||
       deliveryOn === undefined ||
       fullName === undefined ||
@@ -54,35 +60,43 @@ module.exports = {
       phoneNumber === undefined ||
       accountHolder === undefined ||
       bankFrom === undefined ||
-      cartItems == undefined
+      cartItems == undefined ||
+      cartTotalQty === undefined ||
+      cartTotalAmount === undefined ||
+      street === undefined ||
+      city === undefined ||
+      country === undefined ||
+      zipCode === undefined ||
+      addressNote === undefined
     ) {
       return res.status(404).json({ message: 'Lengkapi semua field' });
     }
 
-    // const product = await Product.findOne({ _id: idProduct });
-
-    // if (!product) {
-    //   return res.status(404).json({ message: 'Item not found' });
-    // }
-
-    // await product.save();
-
-    const invoice = Math.floor(1000000 + Math.random() * 9000000);
+    const member = await Member.create({
+      email,
+      fullName,
+      phoneNumber,
+      addressNote,
+      street,
+      city,
+      country,
+      zipCode,
+    });
 
     const newOrder = {
-      invoice,
+      fullName,
       orderOn,
       deliveryOn,
       cartItems,
+      cartTotalQty,
+      cartTotalAmount,
+      memberId: member._id,
       payments: {
         bankFrom: bankFrom,
         accountHolder: accountHolder,
       },
     };
     const order = await Order.create(newOrder);
-    res.status(200).json({ order });
-    res.send(order);
-
     return res.status(200).json({ message: 'Success Booking', order });
   },
 };

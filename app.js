@@ -6,7 +6,7 @@ var logger = require('morgan');
 const methodOverride = require('method-override');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const shortid = require('shortid');
+// const shortid = require('shortid');
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -28,7 +28,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const categoryRouter = require('./routes/category');
 const productRouter = require('./routes/product');
-const orderRouter = require('./routes/order');
+// const orderRouter = require('./routes/order');
 const apiRouter = require('./routes/api');
 
 var app = express();
@@ -69,68 +69,68 @@ app.use('/users', usersRouter);
 // ROUTES
 app.use('/category', categoryRouter);
 app.use('/product', productRouter);
-app.use('/order', orderRouter);
+// app.use('/order', orderRouter);
 app.use('/api/v1/member', apiRouter);
 
-const Order = mongoose.model(
-  'order',
-  new mongoose.Schema(
-    {
-      _id: {
-        type: String,
-        default: shortid.generate,
-      },
-      email: String,
-      fullName: String,
-      orderOn: String,
-      deliveryOn: String,
-      addressNote: String,
-      cartItems: [
-        {
-          _id: String,
-          title: String,
-          price: Number,
-          cartQty: Number,
-        },
-      ],
-      cartTotalQty: Number,
-      cartTotalAmount: Number,
-      // phoneNumber: String,
-      // bankFrom: String,
-      // accountHolder: String,
-      // street: String,
-      // city: String,
-      // country: String,
-      // zipCode: String,
-      // status: String,
-    },
-    {
-      timestamps: true,
-    }
-  )
-);
+// const Order = mongoose.model(
+//   'order',
+//   new mongoose.Schema(
+//     {
+//       _id: {
+//         type: String,
+//         default: shortid.generate,
+//       },
+//       email: String,
+//       fullName: String,
+//       orderOn: String,
+//       deliveryOn: String,
+//       addressNote: String,
+//       cartItems: [
+//         {
+//           _id: String,
+//           title: String,
+//           price: Number,
+//           cartQty: Number,
+//         },
+//       ],
+//       cartTotalQty: Number,
+//       cartTotalAmount: Number,
+//       phoneNumber: String,
+//       bankFrom: String,
+//       accountHolder: String,
+//       street: String,
+//       city: String,
+//       country: String,
+//       zipCode: String,
+//       status: String,
+//     },
+//     {
+//       timestamps: true,
+//     }
+//   )
+// );
 
-app.post('/api/orders', async (req, res) => {
-  if (
-    req.body.fullName === undefined ||
-    req.body.email === undefined ||
-    req.body.addressNote === undefined ||
-    req.body.cartItems === undefined ||
-    req.body.deliveryOn === undefined ||
-    req.body.orderOn === undefined ||
-    req.body.cartTotalAmount === undefined ||
-    req.body.cartTotalQty === undefined
-  ) {
-    return res.status(404).json({ message: 'Data is required.' });
-  }
-  const order = await Order(req.body).save();
-  return res.send(order);
-});
+// app.post('/api/orders', async (req, res) => {
+//   if (
+//     req.body.fullName === undefined ||
+//     req.body.email === undefined ||
+//     req.body.addressNote === undefined ||
+//     req.body.cartItems === undefined ||
+//     req.body.deliveryOn === undefined ||
+//     req.body.orderOn === undefined ||
+//     req.body.cartTotalAmount === undefined ||
+//     req.body.cartTotalQty === undefined
+//   ) {
+//     return res.status(404).json({ message: 'Data is required.' });
+//   }
+//   const order = await Order(req.body).save();
+//   return res.send(order);
+// });
 
-app.get('/api/orders', async (req, res) => {
-  const orders = await Order.find({});
-  res.send(orders);
-});
+// app.get('/api/orders', async (req, res) => {
+//   const orders = await Order.find({});
+//   res.send(orders);
+// });
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,27 +1,38 @@
 const mongoose = require('mongoose');
+const shortid = require('shortid');
 const { ObjectId } = mongoose.Schema;
-const id = Math.floor(1000000 + Math.random() * 9000000);
 const orderSchema = new mongoose.Schema(
   {
-    orderOn: {
-      type: Date,
-      required: true,
-    },
-    deliveryOn: {
-      type: Date,
-      required: true,
-    },
     invoice: {
       type: String,
+      default: shortid.generate,
+    },
+    fullName: {
+      type: String,
       required: true,
+    },
+    orderOn: {
+      type: Date,
+      default: new Date(),
+    },
+    deliveryOn: {
+      type: String,
+      default: new Date(),
     },
     cartItems: [
       {
         _id: String,
-        name: String,
+        title: String,
         price: Number,
+        cartQty: Number,
       },
     ],
+    memberId: {
+      type: ObjectId,
+      ref: 'Member',
+    },
+    cartTotalQty: Number,
+    cartTotalAmount: Number,
     payments: {
       // proofPayment: {
       //   type: String,
