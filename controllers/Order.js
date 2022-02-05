@@ -22,6 +22,22 @@ module.exports = {
       res.redirect('/order');
     }
   },
+
+  createOrder: async (req, res) => {
+    const order = req.body;
+
+    const newOrder = new Order({
+      ...order,
+    });
+
+    try {
+      await newOrder.save();
+
+      res.status(201).json(newOrder);
+    } catch (error) {
+      res.status(409).json({ message: error.message });
+    }
+  },
   //   viewCreate: async (req, res) => {
   //     try {
   //       const category = await Category.find();

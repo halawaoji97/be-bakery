@@ -67,15 +67,12 @@ module.exports = {
 
     // await product.save();
 
-    let totalAmount = '20';
-
     const invoice = Math.floor(1000000 + Math.random() * 9000000);
 
     const newOrder = {
       invoice,
       orderOn,
       deliveryOn,
-      totalAmount,
       cartItems,
       payments: {
         bankFrom: bankFrom,
@@ -83,7 +80,8 @@ module.exports = {
       },
     };
     const order = await Order.create(newOrder);
-    console.log(order);
+    res.status(200).json({ order });
+    res.send(order);
 
     return res.status(200).json({ message: 'Success Booking', order });
   },

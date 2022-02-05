@@ -3,10 +3,6 @@ const { ObjectId } = mongoose.Schema;
 const id = Math.floor(1000000 + Math.random() * 9000000);
 const orderSchema = new mongoose.Schema(
   {
-    _id: {
-      type: String,
-      default: id,
-    },
     orderOn: {
       type: Date,
       required: true,
@@ -26,10 +22,6 @@ const orderSchema = new mongoose.Schema(
         price: Number,
       },
     ],
-    totalAmount: {
-      type: Number,
-      required: true,
-    },
     payments: {
       // proofPayment: {
       //   type: String,
