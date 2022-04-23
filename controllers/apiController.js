@@ -1,7 +1,7 @@
-const Product = require('../models/Product');
-const Category = require('../models/Category');
-const Order = require('../models/Order');
-const Member = require('../models/Member');
+const Product = require('../models/Product')
+const Category = require('../models/Category')
+const Order = require('../models/Order')
+const Member = require('../models/Member')
 
 module.exports = {
   landingPage: async (req, res) => {
@@ -9,27 +9,27 @@ module.exports = {
       const specialProduct = await Product.find()
         .select('_id name price categoryId imageUrl')
         .limit(5)
-        .populate({ path: 'categoryId', select: '_id name' });
-      res.status(200).json({ specialProduct });
+        .populate({ path: 'categoryId', select: '_id name' })
+      res.status(200).json({ specialProduct })
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: 'Internal server error' });
+      console.log(error)
+      res.status(500).json({ message: 'Internal server error' })
     }
   },
 
   detailPage: async (req, res) => {
     try {
-      const { id } = req.params;
+      const { id } = req.params
       const product = await Product.findOne({ _id: id }).populate({
         path: 'categoryId',
-        select: '_id name',
-      });
+        select: '_id name'
+      })
 
       res.status(200).json({
-        ...product._doc,
-      });
+        ...product._doc
+      })
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+      res.status(500).json({ message: 'Internal server error' })
     }
   },
 
@@ -44,13 +44,11 @@ module.exports = {
       cartTotalQty,
       cartTotalAmount,
       phoneNumber,
-      bankFrom,
-      accountHolder,
       street,
       city,
       country,
-      zipCode,
-    } = req.body;
+      zipCode
+    } = req.body
 
     if (
       orderOn === undefined ||
@@ -58,8 +56,6 @@ module.exports = {
       fullName === undefined ||
       email === undefined ||
       phoneNumber === undefined ||
-      accountHolder === undefined ||
-      bankFrom === undefined ||
       cartItems == undefined ||
       cartTotalQty === undefined ||
       cartTotalAmount === undefined ||
@@ -69,7 +65,7 @@ module.exports = {
       zipCode === undefined ||
       addressNote === undefined
     ) {
-      return res.status(404).json({ message: 'Lengkapi semua field' });
+      return res.status(404).json({ message: 'Lengkapi semua field' })
     }
 
     const member = await Member.create({
@@ -80,8 +76,8 @@ module.exports = {
       street,
       city,
       country,
-      zipCode,
-    });
+      zipCode
+    })
 
     const newOrder = {
       fullName,
@@ -90,13 +86,9 @@ module.exports = {
       cartItems,
       cartTotalQty,
       cartTotalAmount,
-      memberId: member._id,
-      payments: {
-        bankFrom: bankFrom,
-        accountHolder: accountHolder,
-      },
-    };
-    const order = await Order.create(newOrder);
-    return res.status(200).json({ message: 'Success Booking', order });
-  },
-};
+      memberId: member._id
+    }
+    const order = await Order.create(newOrder)
+    return res.status(200).json({ message: 'Success Booking', order })
+  }
+}
